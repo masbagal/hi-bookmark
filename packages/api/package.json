@@ -1,5 +1,5 @@
 {
-  "name": "hi-bookmark",
+  "name": "hi-bookmark-api",
   "scripts": {
     "dev": "bun run --hot src/index.ts"
   },

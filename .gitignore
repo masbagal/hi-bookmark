@@ -7,7 +7,7 @@ node_modules
 .wrangler
 **/.svelte-kit
 /build
-/api/drizzle
+**/api/drizzle
 
 # OS
 .DS_Store

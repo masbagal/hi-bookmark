@@ -20,6 +20,7 @@
 			await update();
 			if (result.type === 'success') {
 				const data = result.data?.data;
+				console.log(result);
 				const token = data['token'];
 				if (token) {
 					localStorage.setItem(TOKEN_STORAGE_KEY, token);

@@ -1,7 +1,7 @@
 import {
+  bigint,
   int,
   mysqlTable,
-  serial,
   text,
   timestamp,
   uniqueIndex,
@@ -36,8 +36,8 @@ export const bookmarkTable = mysqlTable("bookmarks", {
 });
 
 export const sessionTable = mysqlTable("sessions", {
-  id: varchar("id", { length: 255 }).primaryKey(),
+  id: varchar("id", { length: 255 }).primaryKey().notNull(),
   user_id: int().notNull(),
-  created_at: timestamp().notNull().defaultNow(),
-  expires_at: timestamp().notNull(),
+  created_at: bigint({ mode: "bigint" }).notNull(),
+  expires_at: bigint({ mode: "bigint" }).notNull(),
 });

@@ -36,3 +36,14 @@ export async function getBookmarks(userId: number) {
     .where(eq(bookmarkTable.user_id, userId));
   return result;
 }
+
+export async function deleteBookmark(bookmarkId: number) {
+  await db.delete(bookmarkTable).where(eq(bookmarkTable.id, bookmarkId));
+  return {
+    status: "SUCCESS",
+    message: "Bookmark deleted",
+    data: {
+      deletedId: bookmarkId,
+    },
+  } as APIResponse;
+}

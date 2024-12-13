@@ -16,22 +16,9 @@ export const actions = {
 			}
 		});
 
-		/* Set refresh token in the httponly cookie */
-		const setCookieHeader = result.headers.get('set-cookie');
-		if (setCookieHeader) {
-			setCookieHeader.split(',').forEach((cookie) => {
-				const [cookieName, cookieValue] = cookie.split(';')[0].split('=');
-				cookies.set(cookieName, cookieValue, {
-					path: '/',
-					httpOnly: true,
-					secure: process.env.NODE_ENV === 'production',
-					sameSite: 'lax',
-					maxAge: 60 * 10
-				});
-			});
-		}
-
+		console.log('xxx', result.headers);
+		const token = result.headers.get('X-Access-Token');
 		const returnedResponse = await result.json();
-		return returnedResponse;
+		return { ...returnedResponse, token };
 	}
 };

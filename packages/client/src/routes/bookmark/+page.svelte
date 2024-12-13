@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 
 	const { form } = $props();
+	// @ts-ignore
 	let bookmarks = $state([]);
 
 	// @ts-ignore
@@ -13,6 +14,18 @@
 		const result = await response.json();
 		if (result.status === 'SUCCESS') {
 			bookmarks.push(result.data);
+		}
+	};
+
+	/**
+	 * @param {string} bookmarkId
+	 */
+	const handleDeleteBookmark = (bookmarkId) => async () => {
+		const response = await protectedFetch('/bookmark/delete', { bookmarkId });
+		const result = await response.json();
+		if (result.status === 'SUCCESS') {
+			console.log(result);
+			bookmarks = bookmarks.filter((bookmark) => bookmark.id !== result.result.data.deletedId);
 		}
 	};
 
@@ -39,5 +52,6 @@
 			<h4 class="text-lg font-bold"><a href={bookmark.url}>{bookmark.title}</a></h4>
 			<p>{bookmark.description}</p>
 		</div>
+		<button onclick={handleDeleteBookmark(bookmark.id)}>Delete</button>
 	</div>
 {/each}

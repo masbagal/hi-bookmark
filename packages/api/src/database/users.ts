@@ -1,17 +1,9 @@
 import { eq } from "drizzle-orm";
 import db, { APIResponse } from "./db";
 import { sessionTable, usersTable } from "./schema";
-import { sign } from "hono/jwt";
-import { setCookie } from "hono/cookie";
 import { Context } from "hono";
 import { generateJWTToken, generateSessionId } from "../utils/authUtils";
-
-export type User = {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-};
+import { User } from "schema/auth";
 
 function returnInvalidCredentialError(message: string) {
   return {
@@ -21,22 +13,11 @@ function returnInvalidCredentialError(message: string) {
 }
 
 /** Register new user, this should also log in the user but not yet created */
-export async function createNewUser(user: Omit<User, "id">) {
-  try {
-    await db.insert(usersTable).values(user);
-  } catch (error) {
-    return returnInvalidCredentialError(
-      "There's a problem in registering this user"
-    );
-  }
-
-  const returnedUser = { ...user };
-  returnedUser.password = "";
-  return {
-    status: "SUCCESS",
-    message: "User successfully registered!",
-    data: returnedUser,
-  } as APIResponse;
+export async function createNewUser(user: User) {
+  await db.insert(usersTable).values(user);
+  const returnedUser = { ...user } as Partial<User>;
+  delete returnedUser.password;
+  return returnedUser as Omit<User, "password">;
 }
 
 /** Sign in user and create token */
@@ -50,7 +31,7 @@ export async function signInUser(
     .where(eq(usersTable.email, user.email));
 
   if (!userEntries || userEntries.length === 0) {
-    return returnInvalidCredentialError("Invalid username or password");
+    throw new Error("Invalid username or password");
   }
 
   const userEntry = userEntries[0];
@@ -60,8 +41,7 @@ export async function signInUser(
     userEntry.password
   );
 
-  if (!isPasswordMatch)
-    return returnInvalidCredentialError("Invalid username or password");
+  if (!isPasswordMatch) throw new Error("Invalid username or password");
 
   const refreshTokenExpiry = Math.floor(Date.now()) + 60 * 60 * 1; // Token expires in 1 hour
   const sessionId = generateSessionId() as string;
@@ -75,16 +55,7 @@ export async function signInUser(
     expires_at: refreshTokenExpiry,
   });
 
-  c.header("X-Access-Token", token);
-
-  return {
-    status: "SUCCESS",
-    message: "User successfully logged-in!",
-    data: {
-      name: userEntry.name,
-      email: userEntry.email,
-    },
-  } as APIResponse;
+  return token;
 }
 
 export async function signOutUser() {}

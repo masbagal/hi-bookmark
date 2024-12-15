@@ -6,8 +6,8 @@ import { TOKEN_STORAGE_KEY } from './constants';
  * @param {*} payload
  * @returns
  */
-export const publicFetch = (url, payload) => {
-	return fetch(`${PUBLIC_API_ENDPOINT}/${url}`, {
+export const clientFetch = (url, payload) => {
+	return fetch(`/api${url}`, {
 		method: 'POST',
 		body: JSON.stringify(payload),
 		headers: {
@@ -22,15 +22,13 @@ export const publicFetch = (url, payload) => {
  * @param {*} payload
  * @returns
  */
-export const protectedFetch = async (url, payload) => {
-	const accessToken = localStorage.getItem(TOKEN_STORAGE_KEY);
-	return fetch(`${PUBLIC_API_ENDPOINT}${url}`, {
+export const publicFetch = (url, payload) => {
+	return fetch(`${PUBLIC_API_ENDPOINT}/${url}`, {
 		method: 'POST',
 		body: JSON.stringify(payload),
 		headers: {
 			'Content-Type': 'application/json',
-			Accept: 'application/json',
-			Authorization: `Bearer ${accessToken}`
+			Accept: 'application/json'
 		}
 	});
 };

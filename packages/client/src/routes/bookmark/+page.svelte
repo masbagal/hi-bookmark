@@ -1,5 +1,5 @@
 <script>
-	import { protectedFetch, protectedGet } from '$lib/clientFetch';
+	import { clientFetch, protectedGet } from '$lib/clientFetch';
 	import { onMount } from 'svelte';
 
 	const { form } = $props();
@@ -10,7 +10,7 @@
 	const handleAddNewBookmark = async (e) => {
 		e.preventDefault();
 		const url = e.currentTarget.urlInput.value;
-		const response = await protectedFetch('/bookmark/add', { url });
+		const response = await clientFetch('/bookmark/add', { url });
 		const result = await response.json();
 		if (result.status === 'SUCCESS') {
 			bookmarks.push(result.data);
@@ -21,7 +21,7 @@
 	 * @param {string} bookmarkId
 	 */
 	const handleDeleteBookmark = (bookmarkId) => async () => {
-		const response = await protectedFetch('/bookmark/delete', { bookmarkId });
+		const response = await clientFetch('/bookmark/delete', { bookmarkId });
 		const result = await response.json();
 		if (result.status === 'SUCCESS') {
 			console.log(result);

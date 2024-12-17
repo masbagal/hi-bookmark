@@ -14,7 +14,7 @@ app.post("/add", bearerAuthMiddleware, async (c) => {
   const userContext = c.var.userContext;
   const body = await c.req.json();
   const { url } = body;
-  console.log("add ", url);
+  console.log("add ", url, userContext);
   try {
     const metadata = await getOpenGraphData(url);
     const result = await addBookmark({
@@ -33,7 +33,7 @@ app.post("/add", bearerAuthMiddleware, async (c) => {
   }
 });
 
-app.get("/get", bearerAuthMiddleware, async (c) => {
+app.post("/get", bearerAuthMiddleware, async (c) => {
   const userContext = c.var.userContext;
   const result = await getBookmarks(userContext.userId);
   return c.json({ bookmark: result, status: "SUCCESS" });

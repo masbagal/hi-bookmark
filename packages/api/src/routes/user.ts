@@ -1,10 +1,15 @@
 import { Hono } from "hono";
 import { validator } from "hono/validator";
 import { userSchema, User, loginSchema } from "schema/auth";
+import { ACCESS_TOKEN_HEADER_KEY } from "schema/constants";
 import { createNewUser, signInUser } from "../database/users";
 import { errorResponse, successResponse } from "../utils/response";
+import { TokenPayload } from "../utils/authUtils";
 
-const app = new Hono();
+type Variables = {
+  userContext: TokenPayload;
+};
+const app = new Hono<{ Variables: Variables }>();
 
 app.post(
   "/signup",
@@ -53,10 +58,10 @@ app.post(
   }),
   async (c) => {
     const body = await c.req.json();
-    const { email, password } = body;
     try {
-      const accessToken = await signInUser(c, { email, password });
-      c.header("X-Access-Token", accessToken);
+      const { token: accessToken, decodedToken } = await signInUser(body);
+      c.header(ACCESS_TOKEN_HEADER_KEY, accessToken);
+      c.set("userContext", decodedToken as TokenPayload);
       return c.json(successResponse(body));
     } catch (error) {
       let errorMessage = "Failed to log you in";

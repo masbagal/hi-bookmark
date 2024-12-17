@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { ACCESS_TOKEN_HEADER_KEY } from "schema/constants";
 import userRoute from "./routes/user";
 import bookmarkRoute from "./routes/bookmark";
 
@@ -12,7 +13,7 @@ app.use(
     credentials: true,
     allowMethods: ["POST", "GET", "OPTIONS", "PUT", "DELETE"],
     allowHeaders: ["Content-Type", "Authorization", "Accept"],
-    exposeHeaders: ["Content-Length", "X-Access-Token"],
+    exposeHeaders: ["Content-Length", ACCESS_TOKEN_HEADER_KEY],
     maxAge: 600,
   })
 );

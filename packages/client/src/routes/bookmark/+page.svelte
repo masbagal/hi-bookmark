@@ -30,7 +30,7 @@
 	};
 
 	onMount(async () => {
-		const result = await protectedGet('/bookmark/get');
+		const result = await clientFetch('/bookmark/get', {});
 		const response = await result.json();
 		bookmarks = response.bookmark;
 	});

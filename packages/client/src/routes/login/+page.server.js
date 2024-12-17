@@ -1,3 +1,4 @@
+import { ACCESS_TOKEN_HEADER_KEY } from 'schema/constants';
 import { COOKIE_ACCESS_TOKEN } from '$lib/constants';
 
 export const actions = {
@@ -18,8 +19,7 @@ export const actions = {
 			}
 		});
 
-		console.log('xxx', result.headers);
-		const token = result.headers.get('X-Access-Token');
+		const token = result.headers.get(ACCESS_TOKEN_HEADER_KEY);
 		if (token) {
 			cookies.set(COOKIE_ACCESS_TOKEN, token, {
 				path: '/',

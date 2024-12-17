@@ -2,8 +2,12 @@ import { eq } from "drizzle-orm";
 import db, { APIResponse } from "./db";
 import { sessionTable, usersTable } from "./schema";
 import { Context } from "hono";
-import { generateJWTToken, generateSessionId } from "../utils/authUtils";
-import { User } from "schema/auth";
+import {
+  generateJWTToken,
+  generateSessionId,
+  getRefreshTokenExpiry,
+} from "../utils/authUtils";
+import type { User } from "schema/auth";
 
 function returnInvalidCredentialError(message: string) {
   return {
@@ -21,10 +25,7 @@ export async function createNewUser(user: User) {
 }
 
 /** Sign in user and create token */
-export async function signInUser(
-  c: Context,
-  user: Pick<User, "email" | "password">
-) {
+export async function signInUser(user: Pick<User, "email" | "password">) {
   const userEntries = await db
     .select()
     .from(usersTable)
@@ -43,9 +44,9 @@ export async function signInUser(
 
   if (!isPasswordMatch) throw new Error("Invalid username or password");
 
-  const refreshTokenExpiry = Math.floor(Date.now()) + 60 * 60 * 1; // Token expires in 1 hour
+  const refreshTokenExpiry = getRefreshTokenExpiry();
   const sessionId = generateSessionId() as string;
-  const token = await generateJWTToken(sessionId, userEntry);
+  const { token, decodedToken } = await generateJWTToken(sessionId, userEntry);
 
   await db.insert(sessionTable).values({
     //@ts-ignore
@@ -55,7 +56,7 @@ export async function signInUser(
     expires_at: refreshTokenExpiry,
   });
 
-  return token;
+  return { token, decodedToken };
 }
 
 export async function signOutUser() {}

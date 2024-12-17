@@ -1,5 +1,6 @@
 import {
   bigint,
+  index,
   int,
   mysqlTable,
   text,
@@ -23,17 +24,26 @@ export const usersTable = mysqlTable(
   }
 );
 
-export const bookmarkTable = mysqlTable("bookmarks", {
-  id: int().primaryKey().autoincrement().notNull(),
-  user_id: int()
-    .notNull()
-    .references(() => usersTable.id),
-  url: text().notNull(),
-  created_at: timestamp().defaultNow(),
-  title: text().notNull(),
-  description: text().notNull(),
-  image: text(),
-});
+export const bookmarkTable = mysqlTable(
+  "bookmarks",
+  {
+    id: int().primaryKey().autoincrement().notNull(),
+    user_id: int()
+      .notNull()
+      .references(() => usersTable.id),
+    url: text().notNull(),
+    created_at: timestamp().defaultNow(),
+    title: text().notNull(),
+    description: text().notNull(),
+    image: text(),
+  },
+  (table) => ({
+    bookmarkUserId: index("bookmark_user_id").on(
+      table.user_id,
+      table.created_at
+    ),
+  })
+);
 
 export const sessionTable = mysqlTable("sessions", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),

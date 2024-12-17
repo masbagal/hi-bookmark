@@ -5,6 +5,7 @@ import { ACCESS_TOKEN_HEADER_KEY } from "schema/constants";
 import { createNewUser, signInUser } from "../database/users";
 import { errorResponse, successResponse } from "../utils/response";
 import { TokenPayload } from "../utils/authUtils";
+import { verify } from "hono/jwt";
 
 type Variables = {
   userContext: TokenPayload;
@@ -73,5 +74,27 @@ app.post(
     }
   }
 );
+
+app.post("/whoami", async (c) => {
+  const auth = c.req.header("Authorization");
+  if (auth) {
+    try {
+      const [, token] = auth.split(" ");
+      const decodedToken = (await verify(
+        token,
+        process.env.JWT_SECRET as string
+      )) as TokenPayload;
+      return c.json({
+        isLoggedIn: true,
+        name: decodedToken.name,
+        email: decodedToken.email,
+      });
+    } catch (error) {
+      return c.json({ isLoggedIn: false });
+    }
+  } else {
+    return c.json({ isLoggedIn: false });
+  }
+});
 
 export default app;

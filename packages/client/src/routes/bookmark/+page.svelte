@@ -9,11 +9,14 @@
 	// @ts-ignore
 	const handleAddNewBookmark = async (e) => {
 		e.preventDefault();
-		const url = e.currentTarget.urlInput.value;
+		const inputElm = e.currentTarget.urlInput;
+		const url = inputElm.value;
 		const response = await clientFetch('/bookmark/add', { url });
 		const result = await response.json();
 		if (result.status === 'SUCCESS') {
-			bookmarks.push(result.data);
+			bookmarks.unshift(result.data);
+			inputElm.focus();
+			inputElm.value = '';
 		}
 	};
 
@@ -24,7 +27,6 @@
 		const response = await clientFetch('/bookmark/delete', { bookmarkId });
 		const result = await response.json();
 		if (result.status === 'SUCCESS') {
-			console.log(result);
 			bookmarks = bookmarks.filter((bookmark) => bookmark.id !== result.result.data.deletedId);
 		}
 	};

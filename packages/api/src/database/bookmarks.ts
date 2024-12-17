@@ -1,6 +1,8 @@
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import db, { APIResponse } from "./db";
 import { bookmarkTable } from "./schema";
+
+const PAGE_SIZE = 5;
 
 type Bookmark = {
   id?: number;
@@ -30,11 +32,12 @@ export async function addBookmark(bookmark: Bookmark) {
 }
 
 export async function getBookmarks(userId: number) {
-  const result = await db
+  return await db
     .select()
     .from(bookmarkTable)
-    .where(eq(bookmarkTable.user_id, userId));
-  return result;
+    .where(eq(bookmarkTable.user_id, userId))
+    .orderBy(desc(bookmarkTable.created_at))
+    .limit(PAGE_SIZE);
 }
 
 export async function deleteBookmark(bookmarkId: number) {

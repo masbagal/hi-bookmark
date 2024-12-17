@@ -23,7 +23,7 @@ const serverFetch = async (url, payload, accessToken) => {
 		headers
 	});
 
-	return await response.json();
+	return response;
 };
 
 export default serverFetch;

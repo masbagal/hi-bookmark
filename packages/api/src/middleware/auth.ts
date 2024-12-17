@@ -34,7 +34,6 @@ const bearerAuthMiddleware = createMiddleware<{
     }
 
     // Validate token
-    console.log("xxx token", token);
     const isCorrectToken = await verify(
       token,
       process.env.JWT_SECRET as string

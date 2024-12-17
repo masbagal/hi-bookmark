@@ -2,10 +2,11 @@ import { Hono } from "hono";
 import { validator } from "hono/validator";
 import { userSchema, User, loginSchema } from "schema/auth";
 import { ACCESS_TOKEN_HEADER_KEY } from "schema/constants";
-import { createNewUser, signInUser } from "../database/users";
+import { createNewUser, signInUser, signOutUser } from "../database/users";
 import { errorResponse, successResponse } from "../utils/response";
 import { TokenPayload } from "../utils/authUtils";
 import { verify } from "hono/jwt";
+import bearerAuthMiddleware from "../middleware/auth";
 
 type Variables = {
   userContext: TokenPayload;
@@ -74,6 +75,13 @@ app.post(
     }
   }
 );
+
+app.post("/signout", bearerAuthMiddleware, async (c) => {
+  const { sessionId } = c.var.userContext;
+  const result = await signOutUser(sessionId);
+  c.header(ACCESS_TOKEN_HEADER_KEY, "");
+  return c.json(successResponse(result));
+});
 
 app.post("/whoami", async (c) => {
   const auth = c.req.header("Authorization");

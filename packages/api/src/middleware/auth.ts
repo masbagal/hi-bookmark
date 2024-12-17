@@ -51,8 +51,6 @@ const bearerAuthMiddleware = createMiddleware<{
       .from(sessionTable)
       .where(eq(sessionTable.id, tokenObject.sessionId));
 
-    console.log("session rows", sessionCheck, tokenObject);
-
     c.set("userContext", tokenObject);
     await next();
   } catch (error) {

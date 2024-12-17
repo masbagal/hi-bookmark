@@ -59,4 +59,6 @@ export async function signInUser(user: Pick<User, "email" | "password">) {
   return { token, decodedToken };
 }
 
-export async function signOutUser() {}
+export async function signOutUser(sessionId: string) {
+  return await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+}

@@ -1,7 +1,5 @@
 <script>
-	// @ts-nocheck
 	import { enhance } from '$app/forms';
-	import { TOKEN_STORAGE_KEY } from '$lib/constants.js';
 	const { form } = $props();
 
 	let loading = $state(false);
@@ -20,11 +18,6 @@
 			await update();
 			if (result.type === 'success') {
 				const data = result.data?.data;
-				console.log(result);
-				const token = data['token'];
-				if (token) {
-					localStorage.setItem(TOKEN_STORAGE_KEY, token);
-				}
 			}
 			loading = false;
 		};

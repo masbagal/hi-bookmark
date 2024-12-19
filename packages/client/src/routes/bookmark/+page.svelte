@@ -1,40 +1,28 @@
-<script>
-	import { clientFetch, protectedGet } from '$lib/clientFetch';
+<script lang="ts">
+	import { clientFetch } from '$lib/fetcher/clientFetch';
 	import { onMount } from 'svelte';
+	import BookmarkList from './bookmarkList.svelte';
+	import { bookmarkState } from './state.svelte.js';
 
 	const { form } = $props();
-	// @ts-ignore
-	let bookmarks = $state([]);
 
-	// @ts-ignore
-	const handleAddNewBookmark = async (e) => {
+	const handleAddNewBookmark = async (e: SubmitEvent) => {
 		e.preventDefault();
-		const inputElm = e.currentTarget.urlInput;
+		const inputElm = (e.currentTarget as HTMLFormElement)?.urlInput;
 		const url = inputElm.value;
 		const response = await clientFetch('/bookmark/add', { url });
 		const result = await response.json();
 		if (result.status === 'SUCCESS') {
-			bookmarks.unshift(result.data);
+			bookmarkState.bookmarks.unshift(result.data);
 			inputElm.focus();
 			inputElm.value = '';
-		}
-	};
-
-	/**
-	 * @param {string} bookmarkId
-	 */
-	const handleDeleteBookmark = (bookmarkId) => async () => {
-		const response = await clientFetch('/bookmark/delete', { bookmarkId });
-		const result = await response.json();
-		if (result.status === 'SUCCESS') {
-			bookmarks = bookmarks.filter((bookmark) => bookmark.id !== result.result.data.deletedId);
 		}
 	};
 
 	onMount(async () => {
 		const result = await clientFetch('/bookmark/get', {});
 		const response = await result.json();
-		bookmarks = response.bookmark;
+		bookmarkState.bookmarks = response.bookmark;
 	});
 </script>
 
@@ -46,14 +34,4 @@
 	<button>Submit</button>
 </form>
 
-<h2>Bookmarks</h2>
-{#each bookmarks as bookmark}
-	<div class="flex w-full flex-col items-center space-x-16 p-8 shadow-sm sm:flex-row">
-		<img class="h-24 w-full object-cover sm:w-24" src={bookmark.image} alt={bookmark.title} />
-		<div>
-			<h4 class="text-lg font-bold"><a href={bookmark.url}>{bookmark.title}</a></h4>
-			<p>{bookmark.description}</p>
-		</div>
-		<button onclick={handleDeleteBookmark(bookmark.id)}>Delete</button>
-	</div>
-{/each}
+<BookmarkList />

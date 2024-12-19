@@ -1,5 +1,5 @@
 import { COOKIE_ACCESS_TOKEN } from '$lib/constants.js';
-import serverFetch from '$lib/fetch.js';
+import serverFetch from '$lib/fetcher/fetch.js';
 import { redirect } from '@sveltejs/kit';
 
 export const GET = async ({ cookies }) => {

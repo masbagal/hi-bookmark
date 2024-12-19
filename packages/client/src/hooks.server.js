@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import serverFetch from '$lib/fetch';
+import serverFetch from '$lib/fetcher/fetch';
 import { COOKIE_ACCESS_TOKEN } from '$lib/constants';
 
 const PUBLIC_URLS = ['/login', '/register'];

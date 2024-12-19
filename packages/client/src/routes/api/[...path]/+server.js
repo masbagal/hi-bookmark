@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { COOKIE_ACCESS_TOKEN } from '$lib/constants';
 import { ACCESS_TOKEN_HEADER_KEY } from 'schema/constants';
-import serverFetch from '$lib/fetch.js';
+import serverFetch from '$lib/fetcher/fetch.js';
 
 export const POST = async ({ request, cookies, params }) => {
 	const payload = await request.json();

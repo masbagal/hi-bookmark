@@ -24,6 +24,7 @@
 		const response = await result.json();
 		bookmarkState.bookmarks = response.bookmark;
 		bookmarkState.nextPageToken = response.nextPageToken;
+		bookmarkState.hasNextPage = Boolean(response.nextPageToken);
 	});
 </script>
 

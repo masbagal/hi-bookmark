@@ -46,10 +46,12 @@ app.post("/add", bearerAuthMiddleware, async (c) => {
 
 app.post("/get", bearerAuthMiddleware, async (c) => {
   const userContext = c.var.userContext;
-  const result = await getBookmarks(userContext.userId);
-  const lastEntry = result[result.length - 1];
-  const nextPageToken = await createNextPageToken(lastEntry.created_at);
-  return c.json({ bookmark: result, nextPageToken, status: "SUCCESS" });
+  const { rows, hasNextPage } = await getBookmarks(userContext.userId);
+  const lastEntry = rows[rows.length - 1];
+  const nextPageToken = hasNextPage
+    ? await createNextPageToken(lastEntry.created_at)
+    : "";
+  return c.json({ bookmark: rows, nextPageToken, status: "SUCCESS" });
 });
 
 app.post(
@@ -70,14 +72,16 @@ app.post(
     const { nextPageToken } = body;
 
     const dateCursor = getLastCreatedDateFromToken(nextPageToken);
-    const result = await getBookmarkNextPagination(
+    const { rows, hasNextPage } = await getBookmarkNextPagination(
       userContext.userId,
       dateCursor
     );
-    const lastEntry = result[result.length - 1];
-    const newNextPageToken = await createNextPageToken(lastEntry.created_at);
+    const lastEntry = rows[rows.length - 1];
+    const newNextPageToken = hasNextPage
+      ? await createNextPageToken(lastEntry.created_at)
+      : "";
     return c.json({
-      bookmarks: result,
+      bookmarks: rows,
       nextPageToken: newNextPageToken,
       status: "SUCCESS",
     });

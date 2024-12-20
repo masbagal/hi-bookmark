@@ -33,12 +33,14 @@ export async function addBookmark(bookmark: Bookmark) {
 
 export async function getBookmarks(userId: number) {
   const { user_id, ...fields } = getTableColumns(bookmarkTable);
-  return await db
+  const result = await db
     .select({ ...fields })
     .from(bookmarkTable)
     .where(eq(bookmarkTable.user_id, userId))
     .orderBy(desc(bookmarkTable.created_at))
-    .limit(PAGE_SIZE);
+    .limit(PAGE_SIZE + 1);
+  const hasNextPage = result.length > PAGE_SIZE;
+  return { rows: result.slice(0, PAGE_SIZE), hasNextPage };
 }
 
 export async function getBookmarkNextPagination(
@@ -46,7 +48,7 @@ export async function getBookmarkNextPagination(
   dateCursor: Date
 ) {
   const { user_id, ...fields } = getTableColumns(bookmarkTable);
-  return await db
+  const result = await db
     .select({ ...fields })
     .from(bookmarkTable)
     .where(
@@ -56,7 +58,9 @@ export async function getBookmarkNextPagination(
       )
     )
     .orderBy(desc(bookmarkTable.created_at))
-    .limit(PAGE_SIZE);
+    .limit(PAGE_SIZE + 1);
+  const hasNextPage = result.length > PAGE_SIZE;
+  return { rows: result.slice(0, PAGE_SIZE), hasNextPage };
 }
 
 export async function deleteBookmark(bookmarkId: number) {

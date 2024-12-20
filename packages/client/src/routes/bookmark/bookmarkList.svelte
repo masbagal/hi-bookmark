@@ -20,6 +20,7 @@
 		if (result.status === 'SUCCESS') {
 			bookmarkState.bookmarks = bookmarkState.bookmarks.concat(result.bookmarks);
 			bookmarkState.nextPageToken = result.nextPageToken;
+			bookmarkState.hasNextPage = Boolean(result.nextPageToken);
 		}
 	};
 </script>
@@ -35,4 +36,7 @@
 		<button onclick={handleDeleteBookmark(bookmark.id)}>Delete</button>
 	</div>
 {/each}
-<button onclick={handleLoadNextPage}>Load next page</button>
+
+{#if bookmarkState.hasNextPage}
+	<button onclick={handleLoadNextPage}>Load next page</button>
+{/if}

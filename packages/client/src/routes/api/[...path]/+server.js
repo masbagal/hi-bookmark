@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { COOKIE_ACCESS_TOKEN } from '$lib/constants';
+import { NODE_ENV } from '$env/static/private';
 import { ACCESS_TOKEN_HEADER_KEY } from 'schema/constants';
 import serverFetch from '$lib/fetcher/fetch.js';
 
@@ -14,7 +15,7 @@ export const POST = async ({ request, cookies, params }) => {
 		cookies.set(COOKIE_ACCESS_TOKEN, token, {
 			path: '/',
 			httpOnly: true,
-			secure: true,
+			secure: NODE_ENV === 'production' ? true : false,
 			sameSite: 'strict'
 		});
 	}

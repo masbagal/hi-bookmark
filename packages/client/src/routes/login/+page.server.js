@@ -1,5 +1,6 @@
 import { ACCESS_TOKEN_HEADER_KEY } from 'schema/constants';
 import { COOKIE_ACCESS_TOKEN } from '$lib/constants';
+import { NODE_ENV } from '$env/static/private';
 
 export const actions = {
 	submit: async ({ request, cookies }) => {
@@ -24,7 +25,7 @@ export const actions = {
 			cookies.set(COOKIE_ACCESS_TOKEN, token, {
 				path: '/',
 				httpOnly: true,
-				secure: true,
+				secure: NODE_ENV === 'production' ? true : false,
 				sameSite: 'strict'
 			});
 		}

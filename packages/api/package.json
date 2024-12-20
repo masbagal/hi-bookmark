@@ -1,7 +1,8 @@
 {
   "name": "hi-bookmark-api",
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/index.ts",
+    "build": "bun build src/index.ts --target=bun --outfile=dist/index.js"
   },
   "dependencies": {
     "cheerio": "^1.0.0",

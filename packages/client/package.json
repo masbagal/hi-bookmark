@@ -12,6 +12,7 @@
 		"lint": "prettier --check . && eslint ."
 	},
 	"dependencies": {
+		"@sveltejs/adapter-node": "^5.2.11",
 		"schema": "workspace:*"
 	},
 	"devDependencies": {

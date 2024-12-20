@@ -8,6 +8,10 @@ export const DeleteBookmarkPayload = z.object({
   bookmarkId: z.number(),
 });
 
+export const NextBookmarkPaginationPayload = z.object({
+  nextPageToken: z.string(),
+});
+
 export type ClientBookmark = {
   id: number;
   url: string;

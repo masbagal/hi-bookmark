@@ -11,6 +11,17 @@
 			);
 		}
 	};
+
+	const handleLoadNextPage = async () => {
+		const response = await clientFetch('/bookmark/next-page', {
+			nextPageToken: bookmarkState.nextPageToken
+		});
+		const result = await response.json();
+		if (result.status === 'SUCCESS') {
+			bookmarkState.bookmarks = bookmarkState.bookmarks.concat(result.bookmarks);
+			bookmarkState.nextPageToken = result.nextPageToken;
+		}
+	};
 </script>
 
 <h2>Bookmarks</h2>
@@ -24,3 +35,4 @@
 		<button onclick={handleDeleteBookmark(bookmark.id)}>Delete</button>
 	</div>
 {/each}
+<button onclick={handleLoadNextPage}>Load next page</button>

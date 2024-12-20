@@ -1,4 +1,4 @@
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, getTableColumns, lt, and } from "drizzle-orm";
 import db, { APIResponse } from "./db";
 import { bookmarkTable } from "./schema";
 
@@ -32,10 +32,29 @@ export async function addBookmark(bookmark: Bookmark) {
 }
 
 export async function getBookmarks(userId: number) {
+  const { user_id, ...fields } = getTableColumns(bookmarkTable);
   return await db
-    .select()
+    .select({ ...fields })
     .from(bookmarkTable)
     .where(eq(bookmarkTable.user_id, userId))
+    .orderBy(desc(bookmarkTable.created_at))
+    .limit(PAGE_SIZE);
+}
+
+export async function getBookmarkNextPagination(
+  userId: number,
+  dateCursor: Date
+) {
+  const { user_id, ...fields } = getTableColumns(bookmarkTable);
+  return await db
+    .select({ ...fields })
+    .from(bookmarkTable)
+    .where(
+      and(
+        eq(bookmarkTable.user_id, userId),
+        lt(bookmarkTable.created_at, dateCursor)
+      )
+    )
     .orderBy(desc(bookmarkTable.created_at))
     .limit(PAGE_SIZE);
 }

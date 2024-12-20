@@ -1,5 +1,5 @@
 import { sign } from "hono/jwt";
-import { User } from "../database/users";
+import { User } from "schema/auth";
 
 export function getRefreshTokenExpiry() {
   return Math.floor(Date.now()) + 60 * 60 * 1;

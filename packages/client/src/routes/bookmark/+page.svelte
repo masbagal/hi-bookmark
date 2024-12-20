@@ -23,6 +23,7 @@
 		const result = await clientFetch('/bookmark/get', {});
 		const response = await result.json();
 		bookmarkState.bookmarks = response.bookmark;
+		bookmarkState.nextPageToken = response.nextPageToken;
 	});
 </script>
 
